@@ -107,7 +107,7 @@ void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senha
 		                scanf("%d", &opcao);
 		                switch(opcao){
 		                	case 0:
-		                		break;
+								break;
 		                	case 1:
 								depositar(nomeCliente, contaSenhaSaldo, k);
 								break;
