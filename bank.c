@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+	/* Commit */
 void menu_inicial(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]);
 	/* menu inicial - contem as opcoes de criar e acessar conta */
 void criar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3]);
