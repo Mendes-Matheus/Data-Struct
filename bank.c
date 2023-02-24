@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-	/* Commit */
 void menu_inicial(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]);
 	/* menu inicial - contem as opcoes de criar e acessar conta */
 void criar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3]);
 	/* oferece ao usuario as opcoes de inserir seu nome, numero da conta e senha */
 void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]);
 	/* acessa a conta e permite a realizacao de depositos, saques, transferencia e consultas de saldo */
+int verificar_senha(int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5], int k);
+    /* verifica se o usuario digitou a senha correta */
 void depositar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k);
 void sacar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k);
 void transferir(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k);
@@ -52,6 +53,8 @@ void menu_inicial(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaE
             case 2:
                 acessar_conta(nomeCliente, contaSenhaSaldo, senhaErrada, tentativas);
                 break;
+            default:
+                printf("Opcao invalida. Tente novamente!\n");
         }
     }while(opcao != 0);
 }
@@ -80,8 +83,8 @@ void criar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3]){
     }
 }
 void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]){
-    char verifica[20];
-    int i, k, verificaConta, verificaSenha, contaErrada = -1;
+    int opcao, i, k, verificaConta, verificaSenha, contaErrada = -1;
+    int verifica;
 
     printf("Digite o numero da sua conta: ");
     scanf("%d", &verificaConta);
@@ -90,13 +93,8 @@ void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senha
         if(verificaConta == contaSenhaSaldo[i][0]){
             k = i;
             if(senhaErrada[k] < 2){
-            	printf("Digite sua senha: ");
-	            scanf("%d", &verificaSenha);
-
-            	if(verificaSenha == contaSenhaSaldo[i][1]){
-            		int opcao;
-	            	senhaErrada[k] = -1;
-	            	tentativas[k] = 2;
+                verifica = verificar_senha(contaSenhaSaldo, senhaErrada, tentativas, k);
+            	if(verifica == 1){
 	                printf("\nCliente: %s\t", nomeCliente[i]);
 	                printf("Conta: %d\t", contaSenhaSaldo[i][0]);
 	                do{
@@ -122,17 +120,6 @@ void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senha
 						}
 	                }while(opcao != 0);
 	            }
-	            else if(verificaSenha != contaSenhaSaldo[i][1] && senhaErrada[k] < 1){
-	                printf("Acesso negado, voce tem mais %d tentativa(s)\n", tentativas[k]); // aviso de tentativas restantes
-	                senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
-	                tentativas[k]--;
-	                break;
-	            }
-	            else if(verificaSenha != contaSenhaSaldo[i][1] && senhaErrada[k] == 1){
-	                printf("Acesso negado, seu cartao foi bloqueado\n");
-	                senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
-	                break;
-	            }
 			}
             else
 	        	printf("Seu cartao foi bloqueado!\n");
@@ -144,6 +131,32 @@ void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senha
         printf("Essa conta nao existe!\n");
     }
     printf("\n");
+}
+int verificar_senha(int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5], int k){
+    int verificaConta, verificaSenha, contaErrada = -1;
+
+    printf("Digite sua senha: ");
+    scanf("%d", &verificaSenha);
+    for(int i = 0; i < 5; i++){
+        if(verificaSenha == contaSenhaSaldo[k][1]){
+            senhaErrada[k] = -1;
+            tentativas[k] = 2;
+            return 1;
+        }
+        else if(verificaSenha != contaSenhaSaldo[k][1] && senhaErrada[k] < 1){
+            printf("Acesso negado, voce tem mais %d tentativa(s)\n", tentativas[k]);
+            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
+            tentativas[k]--;
+            return 2;
+        }
+        else if(verificaSenha != contaSenhaSaldo[k][1] && senhaErrada[k] == 1){
+            printf("Acesso negado, seu cartao foi bloqueado\n");
+            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
+            return 3;
+        }
+        else
+            return 0;
+    }
 }
 void depositar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k){
 	int deposito;
@@ -164,16 +177,22 @@ void sacar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k){
 		scanf("%d", &senha);
 
 		if(contaSenhaSaldo[k][1] == senha){
-			printf("Deseja sacar RS%d?\n", saque);
-			printf("1. Sim\n2. Nao\n");
-			scanf("%d", &opcao);
-
-			if(opcao == 1){
-				contaSenhaSaldo[k][2] -= saque;
-			}
-			else
-				printf("Operacao cancelada\n");
-		}
+			do{
+                printf("Deseja sacar RS%d?\n", saque);
+                printf("1. Sim\n2. Nao\n");
+                scanf("%d", &opcao);
+                switch(opcao){
+                    case 1:
+                        contaSenhaSaldo[k][2] -= saque;
+                        break;
+                    case 2:
+                        printf("Operacao cancelada!\n");
+                        break;
+                    default:
+                        printf("Opcao invalida!\n");
+                }
+            }while(opcao != 2 && opcao != 1);
+        }
 		else
 			printf("Senha invalida. Tente novamente!\n");
 	}
@@ -196,16 +215,22 @@ void transferir(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k){
 				scanf("%d", &senha);
 
 				if(contaSenhaSaldo[k][1] == senha){
-					printf("Deseja transferir RS%d para %s a conta %d?\n", transferencia, nomeCliente[y], contaSenhaSaldo[y][0]);
-					printf("1. Sim\n2. Nao\n");
-					scanf("%d", &opcao);
-
-					if(opcao == 1){
-						contaSenhaSaldo[k][2] -= transferencia;
-						contaSenhaSaldo[y][2] += transferencia;
-					}
-					else
-						printf("Operacao cancelada\n");
+                    do{
+                        printf("Deseja transferir RS%d para %s a conta %d?\n", transferencia, nomeCliente[y], contaSenhaSaldo[y][0]);
+                        printf("1. Sim\n2. Nao\n");
+                        scanf("%d", &opcao);
+                        switch(opcao){
+                            case 1:
+                                contaSenhaSaldo[k][2] -= transferencia;
+                                contaSenhaSaldo[y][2] += transferencia;
+                                break;
+                            case 2:
+                                printf("Operacao cancelada\n");
+                                break;
+                            default:
+                                printf("Opcao invalida!\n");
+                        }
+                    }while(opcao != 2 && opcao != 1);
 				}
 				else
 					printf("Senha invalida. Tente novamente!\n");
