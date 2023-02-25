@@ -45,6 +45,7 @@ int main(){
 void menu_inicial(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]){
     int opcao;
     do{
+        printf("\nBanco Imaginario\n\nSelecione uma opcao\n");
         printf("1. Criar conta\n2. Acessar conta\n0. Sair\n");
         scanf("%d", &opcao);
         switch(opcao){
@@ -66,21 +67,21 @@ void criar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3]){
 
     for(int i = 0; i < 5; i++){
         if(strlen(nomeCliente[i]) == 0){
-            printf("Digite seu nome[%d]: ", i);
+            printf("Digite seu nome: ", i);
             scanf(" %[^\n]", nomeCliente[i]);
             break;
         }
     }
     for(int i = 0, j = 0; i < 5; i++){
         if(contaSenhaSaldo[i][j] == 0){
-            printf("Digite o numero da conta[%d][%d]: ", i, j);
+            printf("Digite o numero da conta: ", i, j);
             scanf("%d", &contaSenhaSaldo[i][j]);
             break;
         }
     }
     for(int i = 0, j = 1; i < 5; i++){
         if(contaSenhaSaldo[i][j] == 0){
-            printf("Digite sua senha[%d][%d]: ", i, j);
+            printf("Digite sua senha: ", i, j);
             scanf("%d", &contaSenhaSaldo[i][j]);
             break;
         }
@@ -215,7 +216,6 @@ void transferir(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErr
         	int transferencia, y = w, z = w;
 			printf("Digite o valor do transferencia: ");
 			scanf("%d", &transferencia);
-
 			if(contaSenhaSaldo[k][2] >= transferencia){
 				if(senhaErrada[k] < 2){
                     verifica = verificar_senha(nomeCliente, contaSenhaSaldo, senhaErrada, tentativas, k);
