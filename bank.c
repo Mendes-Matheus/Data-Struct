@@ -3,16 +3,16 @@
 #include <string.h>
 
 void menu_inicial(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]);
-	/* menu inicial - contem as opcoes de criar e acessar conta */
+	/* funcao menu inicial: contem as opcoes de criar e acessar conta */
 void criar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3]);
-	/* oferece ao usuario as opcoes de inserir seu nome, numero da conta e senha */
+	/* funcao criar conta: oferece ao usuario as opcoes de inserir seu nome, numero da conta e senha */
 void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5]);
 	/* acessa a conta e permite a realizacao de depositos, saques, transferencia e consultas de saldo */
 int verificar_senha(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5], int k);
     /*
-        verifica se o usuario digitou a senha correta e bloqueia o cartao caso ele erre a senha 3 vezes seguidas toda vez
-        toda vez que ele tentar acessar a conta, sacar ou fazer uma transferencia. Ao acertar a senha, a contagem zera e
-        usuario tera mais 3 chances de errar a senha novamente
+        funcao verifica senha: verifica se o usuario digitou a senha correta e bloqueia a conta caso ele erre a senha 3 
+        vezes seguidas toda vez toda vez que ele tentar acessar a conta, sacar ou fazer uma transferencia. Ao acertar 
+        a senha, a contagem zera e usuario tera mais 3 chances de errar a senha novamente
     */
 void depositar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int k);
 void sacar(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErrada[5], int tentativas[5], int k);
@@ -128,7 +128,7 @@ void acessar_conta(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senha
 	            }
 			}
             else
-	        	printf("\nSeu cartao foi bloqueado!\n");
+	        	printf("\nSua conta foi bloqueado!\n");
         }
         else
             contaErrada++;
@@ -151,13 +151,13 @@ int verificar_senha(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senh
         }
         else if(verificaSenha != contaSenhaSaldo[k][1] && senhaErrada[k] < 1){
             printf("\nAcesso negado, voce tem mais %d tentativa(s)\n", tentativas[k]);
-            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
+            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear a conta
             tentativas[k]--;
             return 2;
         }
         else if(verificaSenha != contaSenhaSaldo[k][1] && senhaErrada[k] == 1){
-            printf("\nAcesso negado, seu cartao foi bloqueado\n");
-            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear o cartao
+            printf("\nAcesso negado, sua conta foi bloqueado\n");
+            senhaErrada[k]++; // caso digitar a senha errada mais de 3x bloquear a conta
             menu_inicial(nomeCliente, contaSenhaSaldo, senhaErrada, tentativas);
         }
         else
@@ -214,34 +214,42 @@ void transferir(char nomeCliente[5][20], int contaSenhaSaldo[5][3], int senhaErr
 	for(int w = 0; w < 5; w++){
         if(contaSenhaSaldo[w][0] == numConta){
         	int transferencia, y = w, z = w;
-			printf("Digite o valor do transferencia: ");
-			scanf("%d", &transferencia);
-			if(contaSenhaSaldo[k][2] >= transferencia){
-				if(senhaErrada[k] < 2){
-                    verifica = verificar_senha(nomeCliente, contaSenhaSaldo, senhaErrada, tentativas, k);
+        	if(senhaErrada[w] >= 2){
+                printf("A conta informada esta bloqueada\n");
+        	}
+        	else{
+                printf("Digite o valor do transferencia: ");
+                scanf("%d", &transferencia);
 
-                    if(verifica == 1){
-                        do{
-                            printf("Deseja transferir RS%d para %s a conta %d?\n", transferencia, nomeCliente[y], contaSenhaSaldo[y][0]);
-                            printf("1. Sim\n2. Nao\n");
-                            scanf("%d", &opcao);
-                            switch(opcao){
-                                case 1:
-                                    contaSenhaSaldo[k][2] -= transferencia;
-                                    contaSenhaSaldo[y][2] += transferencia;
-                                    break;
-                                case 2:
-                                    printf("Operacao cancelada\n");
-                                    break;
-                                default:
-                                    printf("Opcao invalida!\n");
-                            }
-                        }while(opcao != 2 && opcao != 1);
+                if(contaSenhaSaldo[k][2] >= transferencia){
+                    if(senhaErrada[k] < 2){
+                        verifica = verificar_senha(nomeCliente, contaSenhaSaldo, senhaErrada, tentativas, k);
+
+                        if(verifica == 1){
+                            do{
+                                printf("Deseja transferir RS%d para %s a conta %d?\n", transferencia, nomeCliente[y], contaSenhaSaldo[y][0]);
+                                printf("1. Sim\n2. Nao\n");
+                                scanf("%d", &opcao);
+                                switch(opcao){
+                                    case 1:
+                                        contaSenhaSaldo[k][2] -= transferencia;
+                                        contaSenhaSaldo[y][2] += transferencia;
+                                        break;
+                                    case 2:
+                                        printf("Operacao cancelada\n");
+                                        break;
+                                    default:
+                                        printf("Opcao invalida!\n");
+                                }
+                            }while(opcao != 2 && opcao != 1);
+                        }
                     }
-				}
+
+                }
+                else
+                    printf("Saldo insuficiente!\n");
 			}
-			else
-				printf("Saldo insuficiente!\n");
+
         }
         else
         	contaInexistente++;
